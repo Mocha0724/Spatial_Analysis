@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Download the Meuse soil sample dataset (tabular copy derived from R `sp::meuse`) as CSV."""
 
-from __future__ import annotations
-
 import argparse
 import hashlib
 import urllib.request
 from pathlib import Path
+from typing import Optional
 
 # Gist-hosted CSV mirror (columns match common R `meuse` exports: x,y in Dutch RD / EPSG:28992).
 DEFAULT_URL = (
@@ -15,7 +14,7 @@ DEFAULT_URL = (
 )
 
 # Optional integrity check (SHA-256 of file as of vendoring); update if upstream gist changes.
-EXPECTED_SHA256: str | None = (
+EXPECTED_SHA256: Optional[str] = (
     "aca2070a2dfaa9590cadbf9dde3ecec230882b7682dc3f910091a21c0e51f0c2"
 )
 
