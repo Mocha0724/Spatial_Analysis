@@ -38,6 +38,8 @@ Notebook 在 `plt.style.use("seaborn-v0_8-whitegrid")` **之后**会重新指定
 
 ```bash
 export MPLCONFIGDIR="$PWD/.mplconfig"
+# 若环境无法写入 ~/.jupyter，可一并指定（仓库已 .gitignore 忽略 .jupyter_config/）：
+# export JUPYTER_CONFIG_DIR="$PWD/.jupyter_config"
 jupyter nbconvert --execute cases/spatial-variability/spatial_variability_meuse.ipynb --inplace
 ```
 

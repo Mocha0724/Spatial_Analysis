@@ -4,6 +4,25 @@
 
 > **说明**：以下公式使用 GitHub 支持的写法（行内用 `$…$`，独立一行用 `$$…$$`）。若本地编辑器仍显示源码，在 GitHub 网页上打开本文件即可看到渲染效果。
 
+### 与 Notebook 配套的图件（`outputs/`）
+
+下文各节讲概念；**同一套图**在可运行案例 [`spatial_variability_meuse.ipynb`](spatial_variability_meuse.ipynb) 中按步骤生成，并写入仓库根目录 [`outputs/`](../../outputs/)。建议 **打开 Notebook 自上而下运行**，再对照下列图片阅读对应小节。
+
+| 图件 | Notebook 中的位置 | 建议对照的理论小节 |
+|------|-------------------|---------------------|
+| `semivariogram_concept.png` | 概念示意（**教学用参数**，非本数据拟合） | [§6 块金、基台与变程](#6-块金基台与变程各指什么) |
+| `meuse_logzn_points.png` | 样点与 `log(zinc)` 分布 | [§2 区域化变量](#2-区域化变量与随机函数) |
+| `empirical_variogram.png` | 经验半变异（Matheron） | [§5 经验半变异](#5-经验半变异与-matheron-估计) |
+| `fitted_variogram_models.png` | 理论模型与经验曲线对比 | [§7 常见模型](#7-常见各向同性模型轮廓) |
+
+![块金、基台、变程示意（球状型曲线；教学用数值，非 Meuse 拟合结果）](../../outputs/semivariogram_concept.png)
+
+![Meuse 样点与 log(锌) 空间分布](../../outputs/meuse_logzn_points.png)
+
+![经验半变异（Matheron 估计）](../../outputs/empirical_variogram.png)
+
+![球状 / 指数 / 高斯模型与经验半变异对比](../../outputs/fitted_variogram_models.png)
+
 ---
 
 ## 1. 为什么要谈「空间变异」
