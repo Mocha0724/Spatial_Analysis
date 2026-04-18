@@ -30,6 +30,17 @@ jupyter notebook cases/spatial-variability/spatial_variability_meuse.ipynb
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
+### 图表中的中文显示
+
+Notebook 在 `plt.style.use("seaborn-v0_8-whitegrid")` **之后**会重新指定带中日韩字形的系统字体（如 macOS 的「苹方」/「冬青黑体」等），避免 Matplotlib 默认落到 Arial 上出现缺字与 `Glyph ... missing from font(s) Arial` 警告。
+
+若在 **Linux** 上仍出现方框或警告，请安装任一字体包后重试，例如 Debian/Ubuntu：`sudo apt install fonts-noto-cjk`。在无图形服务器环境下批量执行 Notebook 时，可将 Matplotlib 配置目录指到可写路径，例如：
+
+```bash
+export MPLCONFIGDIR="$PWD/.mplconfig"
+jupyter nbconvert --execute cases/spatial-variability/spatial_variability_meuse.ipynb --inplace
+```
+
 ## 仓库结构
 
 | 路径 | 说明 |

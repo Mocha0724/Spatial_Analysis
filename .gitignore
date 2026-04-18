@@ -30,3 +30,6 @@ data/raw/tmp/
 # Local Jupyter config when using JUPYTER_CONFIG_DIR inside the repo
 .jupyter_config/
 .jupyter_data/
+
+# Local matplotlib font cache (optional; speeds up font scan when set via MPLCONFIGDIR)
+.mplconfig/
