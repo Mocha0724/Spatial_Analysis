@@ -1,0 +1,32 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.so
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Optional: ignore large ad-hoc downloads under data/raw/tmp/
+data/raw/tmp/
+
+# Outputs (regenerate from notebook); uncomment if you prefer not to track figures
+# outputs/*
+# !outputs/.gitkeep
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Local Jupyter config when using JUPYTER_CONFIG_DIR inside the repo
+.jupyter_config/
+.jupyter_data/
