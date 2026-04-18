@@ -49,7 +49,6 @@ jupyter nbconvert --execute cases/spatial-variability/spatial_variability_meuse.
 | [`data/processed/meuse.csv`](data/processed/meuse.csv) | Meuse 数据表；亦可由脚本重新下载并校验 |
 | [`scripts/download_meuse.py`](scripts/download_meuse.py) | 数据下载与完整性校验（SHA-256） |
 | [`outputs/`](outputs/) | 与 Notebook 一致的示例图（运行 Notebook 可重新生成） |
-| [`docs/`](docs/) | 便于发布到个人站点的文章稿（Markdown） |
 
 ## 本案例涵盖的内容
 

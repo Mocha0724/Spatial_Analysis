@@ -33,3 +33,6 @@ data/raw/tmp/
 
 # Local matplotlib font cache (optional; speeds up font scan when set via MPLCONFIGDIR)
 .mplconfig/
+
+# Blog / personal site drafts — keep locally, do not push to GitHub
+docs/
