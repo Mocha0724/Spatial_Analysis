@@ -13,7 +13,7 @@ DEFAULT_URL = (
     "91a2666f7c5972a91bca763daecdc5ff/raw/meuse.csv"
 )
 
-# Optional integrity check (SHA-256 of file as of vendoring); update if upstream gist changes.
+# Expected SHA-256 for the default URL; update if the mirror file changes.
 EXPECTED_SHA256: Optional[str] = (
     "aca2070a2dfaa9590cadbf9dde3ecec230882b7682dc3f910091a21c0e51f0c2"
 )

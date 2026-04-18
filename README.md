@@ -1,6 +1,6 @@
 # Spatial_Analysis — 空间变异分析案例仓库
 
-以 **半变异函数 / 空间变异结构** 为核心的可复现 Python 示例（`venv` + `requirements.txt`），默认案例为 **Meuse 河漫滩土壤样点** 上的 `log(锌)`。
+本仓库提供基于 **半变异函数** 的 **空间变异结构** 分析示例：使用 Python（`venv` 与 `requirements.txt` 管理依赖），案例数据为 **Meuse 河漫滩土壤样点**，区域化变量为 **`log(锌)`**（ppm 的对数）。
 
 ## 快速开始
 
@@ -17,7 +17,7 @@ source .venv/bin/activate
 pip install -U pip
 pip install -r requirements.txt
 
-# 获取数据（或直接使用已提交的 data/processed/meuse.csv）
+# 获取数据（仓库已含 data/processed/meuse.csv，也可重新下载并校验）
 python scripts/download_meuse.py
 
 # 在仓库根目录启动 Notebook
@@ -32,23 +32,21 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ## 仓库结构
 
+| 路径 | 说明 |
+|------|------|
+| [`cases/spatial-variability/`](cases/spatial-variability/) | 主 Notebook 与案例说明 |
+| [`data/processed/meuse.csv`](data/processed/meuse.csv) | Meuse 数据表；亦可由脚本重新下载并校验 |
+| [`scripts/download_meuse.py`](scripts/download_meuse.py) | 数据下载与完整性校验（SHA-256） |
+| [`outputs/`](outputs/) | 与 Notebook 一致的示例图（运行 Notebook 可重新生成） |
+| [`docs/`](docs/) | 便于发布到个人站点的文章稿（Markdown） |
 
-| 路径                                                         | 说明                       |
-| ---------------------------------------------------------- | ------------------------ |
-| `[cases/spatial-variability/](cases/spatial-variability/)` | 主 Notebook 与案例说明         |
-| `[data/processed/meuse.csv](data/processed/meuse.csv)`     | Meuse 数据（可用脚本重新下载校验）     |
-| `[scripts/download_meuse.py](scripts/download_meuse.py)`   | 数据下载与 SHA-256 校验         |
-| `[outputs/](outputs/)`                                     | Notebook 导出的示例图（可重新运行生成） |
-| `[docs/](docs/)`                                           | 面向个人博客的 Markdown 草稿      |
-
-
-## 方法链条（首版范围）
+## 本案例涵盖的内容
 
 1. 经验半变异（分箱、Matheron 估计）
-2. 球状 / 指数 / 高斯模型拟合（`[gstools](https://geostat-framework.readthedocs.io/)`）
-3. 解释 **块金（nugget）**、**部分基台 / 总基台**、**相关尺度（依模型换算的有效距离）**
+2. 球状 / 指数 / 高斯模型拟合（[`gstools`](https://geostat-framework.readthedocs.io/)）
+3. **块金（nugget）**、**部分基台 / 总基台**、**相关尺度**（含按模型换算的有效距离）的解读
 
-未包含：各向异性、稳健变异函数、交叉验证与克里金插值（可作为后续扩展）。
+各向异性变异函数、稳健估计、交叉验证以及克里金插值等主题未在本例中展开，可在标准地统计教材与文献中延伸学习。
 
 ## 参考文献（延伸阅读）
 
@@ -63,7 +61,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 - Webster, R., & Oliver, M. A. (2007). *Geostatistics for Environmental Scientists*. Wiley.  
 - Isaaks, E. H., & Srivastava, R. M. (1989). *An Introduction to Applied Geostatistics*. Oxford University Press.
 
-中文读者可自行补充常用「地统计学 / 空间统计分析」教材条目（GB/T 7714 或 APA 格式统一即可）。
+中文教材或译著可按 GB/T 7714、APA 等惯例另行著录。
 
 ## 许可
 
