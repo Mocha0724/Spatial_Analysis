@@ -45,18 +45,17 @@ jupyter nbconvert --execute cases/spatial-variability/spatial_variability_meuse.
 
 | 路径 | 说明 |
 |------|------|
-| [`cases/spatial-variability/`](cases/spatial-variability/) | 主 Notebook 与案例说明 |
+| [`cases/spatial-variability/`](cases/spatial-variability/) | 理论导读（Markdown）、主 Notebook 与案例说明 |
 | [`data/processed/meuse.csv`](data/processed/meuse.csv) | Meuse 数据表；亦可由脚本重新下载并校验 |
 | [`scripts/download_meuse.py`](scripts/download_meuse.py) | 数据下载与完整性校验（SHA-256） |
 | [`outputs/`](outputs/) | 与 Notebook 一致的示例图（运行 Notebook 可重新生成） |
 
 ## 本案例涵盖的内容
 
-1. 经验半变异（分箱、Matheron 估计）
-2. 球状 / 指数 / 高斯模型拟合（[`gstools`](https://geostat-framework.readthedocs.io/)）
-3. **块金（nugget）**、**部分基台 / 总基台**、**相关尺度**（含按模型换算的有效距离）的解读
+1. **理论**：区域化变量、平稳性、协方差与半变异的关系、经验估计与参数含义——见 [`cases/spatial-variability/spatial_variability_theory.md`](cases/spatial-variability/spatial_variability_theory.md)。
+2. **实践**：经验半变异（分箱、Matheron 估计）、球状 / 指数 / 高斯模型拟合（[`gstools`](https://geostat-framework.readthedocs.io/)）、**块金**、**部分基台 / 总基台**、**相关尺度**（含按模型换算的有效距离）的解读。
 
-各向异性变异函数、稳健估计、交叉验证以及克里金插值等主题未在本例中展开，可在标准地统计教材与文献中延伸学习。
+各向异性变异函数、稳健估计、交叉验证以及克里金插值等主题未在本例代码中展开，可在标准地统计教材与文献中延伸学习。
 
 ## 参考文献（延伸阅读）
 
