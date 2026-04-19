@@ -36,3 +36,4 @@ data/raw/tmp/
 
 # Blog / personal site drafts — keep locally, do not push to GitHub
 docs/
+.ipython/

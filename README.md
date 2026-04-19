@@ -1,6 +1,6 @@
-# Spatial_Analysis — 空间变异分析案例仓库
+# Spatial_Analysis — 综合空间分析案例仓库
 
-本仓库提供基于 **半变异函数** 的 **空间变异结构** 分析示例：使用 Python（`venv` 与 `requirements.txt` 管理依赖），案例数据为 **Meuse 河漫滩土壤样点**，区域化变量为 **`log(锌)`**（ppm 的对数）。
+本仓库收录多个 **空间分析** 主题的教学案例，每个案例包含理论导读（Markdown）与可运行的 Jupyter Notebook，使用 Python（`venv` + `requirements.txt` 管理依赖）。
 
 ## 快速开始
 
@@ -16,12 +16,6 @@ source .venv/bin/activate
 
 pip install -U pip
 pip install -r requirements.txt
-
-# 获取数据（仓库已含 data/processed/meuse.csv，也可重新下载并校验）
-python scripts/download_meuse.py
-
-# 在仓库根目录启动 Notebook
-jupyter notebook cases/spatial-variability/spatial_variability_meuse.ipynb
 ```
 
 若 `pip` 下载过慢，可使用国内 PyPI 镜像（示例：清华大学）：
@@ -32,47 +26,111 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ### 图表中的中文显示
 
-Notebook 在 `plt.style.use("seaborn-v0_8-whitegrid")` **之后**会重新指定带中日韩字形的系统字体（如 macOS 的「苹方」/「冬青黑体」等），避免 Matplotlib 默认落到 Arial 上出现缺字与 `Glyph ... missing from font(s) Arial` 警告。
-
-若在 **Linux** 上仍出现方框或警告，请安装任一字体包后重试，例如 Debian/Ubuntu：`sudo apt install fonts-noto-cjk`。在无图形服务器环境下批量执行 Notebook 时，可将 Matplotlib 配置目录指到可写路径，例如：
+各 Notebook 在配置 Matplotlib 时会优先搜索系统中安装的中文字体（如 macOS 的「苹方」/「冬青黑体」）。若在 **Linux** 上出现方框或 `Glyph ... missing` 警告，请安装字体包后重试：
 
 ```bash
-export MPLCONFIGDIR="$PWD/.mplconfig"
-# 若环境无法写入 ~/.jupyter，可一并指定（仓库已 .gitignore 忽略 .jupyter_config/）：
-# export JUPYTER_CONFIG_DIR="$PWD/.jupyter_config"
-jupyter nbconvert --execute cases/spatial-variability/spatial_variability_meuse.ipynb --inplace
+# Debian/Ubuntu
+sudo apt install fonts-noto-cjk
 ```
+
+---
+
+## 案例目录
+
+| 案例 | 主题 | 数据 | Notebook |
+|------|------|------|----------|
+| [空间变异](cases/spatial-variability/) | 半变异函数与地统计结构 | Meuse 河漫滩土壤（荷兰） | [`spatial_variability_meuse.ipynb`](cases/spatial-variability/spatial_variability_meuse.ipynb) |
+| [空间可达性](cases/spatial-accessibility/) | 医疗设施可达性度量 | 合成城市数据（可替换） | [`spatial_accessibility_analysis.ipynb`](cases/spatial-accessibility/spatial_accessibility_analysis.ipynb) |
+
+---
 
 ## 仓库结构
 
-| 路径 | 说明 |
-|------|------|
-| [`cases/spatial-variability/`](cases/spatial-variability/) | 理论导读（Markdown）、主 Notebook 与案例说明 |
-| [`data/processed/meuse.csv`](data/processed/meuse.csv) | Meuse 数据表；亦可由脚本重新下载并校验 |
-| [`scripts/download_meuse.py`](scripts/download_meuse.py) | 数据下载与完整性校验（SHA-256） |
-| [`outputs/`](outputs/) | 与 Notebook 一致的示例图（运行 Notebook 可重新生成） |
+```
+Spatial_Analysis/
+├── cases/
+│   ├── spatial-variability/          # 空间变异案例
+│   │   ├── README.md
+│   │   ├── spatial_variability_theory.md
+│   │   └── spatial_variability_meuse.ipynb
+│   └── spatial-accessibility/        # 空间可达性案例
+│       ├── README.md
+│       ├── spatial_accessibility_theory.md
+│       └── spatial_accessibility_analysis.ipynb
+├── data/
+│   ├── README.md
+│   └── processed/
+│       └── meuse.csv
+├── outputs/
+│   ├── spatial-variability/          # 空间变异案例输出图件
+│   └── spatial-accessibility/        # 空间可达性案例输出图件
+├── scripts/
+│   ├── _build_notebook.py            # 生成空间变异 Notebook
+│   ├── _build_notebook_accessibility.py   # 生成空间可达性 Notebook
+│   └── download_meuse.py             # 下载并校验 Meuse 数据
+└── requirements.txt
+```
 
-## 本案例涵盖的内容
+---
 
-1. **理论**：区域化变量、平稳性、协方差与半变异的关系、经验估计与参数含义——见 [`cases/spatial-variability/spatial_variability_theory.md`](cases/spatial-variability/spatial_variability_theory.md)。
-2. **实践**：经验半变异（分箱、Matheron 估计）、球状 / 指数 / 高斯模型拟合（[`gstools`](https://geostat-framework.readthedocs.io/)）、**块金**、**部分基台 / 总基台**、**相关尺度**（含按模型换算的有效距离）的解读。
+## 案例一：空间变异分析
 
-各向异性变异函数、稳健估计、交叉验证以及克里金插值等主题未在本例代码中展开，可在标准地统计教材与文献中延伸学习。
+**目录**：[`cases/spatial-variability/`](cases/spatial-variability/)
+
+**数据**：Meuse 河漫滩土壤样点（`data/processed/meuse.csv`），区域化变量为 `log(锌)`。
+
+```bash
+# 下载或校验数据（仓库已含，也可重新获取）
+python scripts/download_meuse.py
+
+# 启动 Notebook
+jupyter notebook cases/spatial-variability/spatial_variability_meuse.ipynb
+```
+
+**涵盖内容**：
+
+1. **理论**：区域化变量、二阶平稳、内蕴假设、协方差与半变异关系  
+2. **实践**：经验半变异（Matheron 估计）、球状/指数/高斯模型拟合（`gstools`）、块金/基台/有效相关距离解读
+
+---
+
+## 案例二：空间可达性分析
+
+**目录**：[`cases/spatial-accessibility/`](cases/spatial-accessibility/)
+
+**数据**：内置合成城市数据集（程序生成，无需额外下载），包含居住人口分区与医疗设施点，可替换为真实数据。
+
+```bash
+# 启动 Notebook（数据随 Notebook 内嵌生成，无需提前准备）
+jupyter notebook cases/spatial-accessibility/spatial_accessibility_analysis.ipynb
+```
+
+**涵盖内容**：
+
+1. **理论**：可达性定义与框架、三类度量方法  
+2. **实践**：
+   - 缓冲区法（Buffer）：阈值距离内的设施数量  
+   - 引力模型（Gravity Model）：距离衰减加权可达性  
+   - 两步移动搜寻法（2SFCA）：供需比累加可达性  
+3. **可视化**：可达性空间分布图、方法对比图
+
+---
 
 ## 参考文献（延伸阅读）
 
-奠基与总论：
+**空间变异 / 地统计**：
 
 - Matheron, G. (1963). *Principles of geostatistics*.  
-- Cressie, N. (1993). *Statistics for Spatial Data*. Wiley. [出版社页面](https://www.wiley.com/en-us/Statistics+for+Spatial+Data%2C+Revised+Edition-p-9780471002401)  
-- Chilès, J.-P., & Delfiner, P. (2012). *Geostatistics: Modeling Spatial Uncertainty*. Wiley.
+- Cressie, N. (1993). *Statistics for Spatial Data*. Wiley.  
+- Chilès, J.-P., & Delfiner, P. (2012). *Geostatistics: Modeling Spatial Uncertainty*. Wiley.  
+- Webster, R., & Oliver, M. A. (2007). *Geostatistics for Environmental Scientists*. Wiley.
 
-应用与教学：
+**空间可达性**:
 
-- Webster, R., & Oliver, M. A. (2007). *Geostatistics for Environmental Scientists*. Wiley.  
-- Isaaks, E. H., & Srivastava, R. M. (1989). *An Introduction to Applied Geostatistics*. Oxford University Press.
-
-中文教材或译著可按 GB/T 7714、APA 等惯例另行著录。
+- Hansen, W. G. (1959). How accessibility shapes land use. *Journal of the American Institute of Planners*, 25(2), 73–76.  
+- Radke, J., & Mu, L. (2000). Spatial decomposition, modeling and mapping service regions to predict access to social programs. *Geographic Information Sciences*, 6(2), 105–112.  
+- Luo, W., & Wang, F. (2003). Measures of spatial accessibility to health care in a GIS environment. *Environment and Planning B*, 30(6), 865–884.  
+- Luo, W., & Qi, Y. (2009). An enhanced two-step floating catchment area (E2SFCA) method for measuring spatial accessibility to primary care physicians. *Health & Place*, 15(4), 1100–1107.
 
 ## 许可
 

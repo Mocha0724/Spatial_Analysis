@@ -18,15 +18,15 @@
 | `empirical_variogram.png` | 经验半变异 $\hat\gamma(h)$ | [§5](#5-经验半变异与-matheron-估计) |
 | `fitted_variogram_models.png` | 球状/指数/高斯与经验曲线对比 | [§6](#6-常见各向同性变异函数模型) |
 
-![原始锌与 log(锌) 直方图（尺度与偏态）](../../outputs/meuse_zinc_log_hist.png)
+![原始锌与 log(锌) 直方图（尺度与偏态）](../../outputs/spatial-variability/meuse_zinc_log_hist.png)
 
-![Meuse 样点与 log(锌) 空间分布](../../outputs/meuse_logzn_points.png)
+![Meuse 样点与 log(锌) 空间分布](../../outputs/spatial-variability/meuse_logzn_points.png)
 
-![半变异曲线参数示意（球状型；教学用）](../../outputs/semivariogram_concept.png)
+![半变异曲线参数示意（球状型；教学用）](../../outputs/spatial-variability/semivariogram_concept.png)
 
-![经验半变异（Matheron 估计）](../../outputs/empirical_variogram.png)
+![经验半变异（Matheron 估计）](../../outputs/spatial-variability/empirical_variogram.png)
 
-![理论模型与经验半变异对比](../../outputs/fitted_variogram_models.png)
+![理论模型与经验半变异对比](../../outputs/spatial-variability/fitted_variogram_models.png)
 
 ---
 

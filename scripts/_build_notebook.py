@@ -93,7 +93,7 @@ def repo_root() -> Path:
 
 ROOT = repo_root()
 DATA = ROOT / "data" / "processed" / "meuse.csv"
-OUT = ROOT / "outputs"
+OUT = ROOT / "outputs" / "spatial-variability"
 OUT.mkdir(parents=True, exist_ok=True)
 """
     )
@@ -525,7 +525,7 @@ cells.append(
 
 ---
 
-### 产出图件（`outputs/`）
+### 产出图件（`outputs/spatial-variability/`）
 
 | 文件 | 内容 |
 |------|------|
