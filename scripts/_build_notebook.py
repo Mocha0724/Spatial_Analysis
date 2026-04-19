@@ -1,4 +1,4 @@
-"""One-off builder for spatial_variability_meuse.ipynb (run from repo root)."""
+"""Builder for spatial_variability_meuse.ipynb — run from repo root: python scripts/_build_notebook.py"""
 import nbformat
 from nbformat.v4 import new_notebook, new_markdown_cell, new_code_cell
 
@@ -11,23 +11,29 @@ def code(s: str):
     return new_code_cell(s.strip())
 
 
+T = "spatial_variability_theory.md"
+
 cells = []
 
 cells.append(
     md(
-        r"""# 空间变异分析：Meuse 河漫滩土壤锌（对数）半变异函数
+        rf"""# 空间变异分析（Meuse）：按理论教学顺序的 Notebook
 
-本 Notebook 与 [`spatial_variability_theory.md`](spatial_variability_theory.md) **配套使用**：理论文档讲定义与假设，这里用数据走完 **经验曲线 → 模型拟合 → 读参数**。
+本 Notebook 与 [`{T}`]({T}) **同一套叙事顺序**：**动机 → 随机函数与数据 → 平稳性直觉 → 协方差/半变异定义（含示意曲线）→ 经验估计 → 参数化模型与拟合 → 读参数与克里金衔接**。每一大节前用一小段文字 **压缩复述理论要点**（详细证明与讨论仍以 Markdown 为准），紧接着用 **图或代码** 落地。
 
-**建议阅读顺序**：先浏览下文「教程结构」→ 需要公式时打开理论文档对应小节 → 自上而下运行全部代码单元。
+**数据**：荷兰 Meuse 河漫滩土壤样点（[`data/README.md`](../../data/README.md)）。**区域化变量**：`log(zinc)`。**坐标**：RD / EPSG:28992（米），各向同性欧氏距离。
 
----
+| Notebook 顺序 | 理论文档（展开阅读） |
+|----------------|----------------------|
+| §1 动机 | [{T} §1]({T}#1-问题设定为何需要空间变异) |
+| §2 数据与变换 | [{T} §2]({T}#2-区域化变量与随机函数) |
+| §3 探索性分布与趋势 | [{T} §3]({T}#3-平稳性从能估计什么出发) |
+| §4 $\gamma(h)$ 长什么样 | [{T} §4]({T}#4-协方差函数与变异函数)、[§7 读图]({T}#7-块金基台与变程读图与尺度换算) |
+| §5 经验半变异 | [{T} §5]({T}#5-经验半变异与-matheron-估计) |
+| §6 模型拟合 | [{T} §6]({T}#6-常见各向同性变异函数模型) |
+| §7 参数与克里金 | [{T} §7]({T}#7-块金基台与变程读图与尺度换算)、[§8]({T}#8-与克里金的关系) |
 
-**数据与变量**
-
-- **数据**：荷兰 Meuse 河漫滩土壤样点（与 R `sp::meuse` 教学数据集一致；详见 [`data/README.md`](../../data/README.md)）。
-- **区域化变量**：`log(zinc)`（ppm 的对数），减轻偏态、使方差更平稳，与常见 `gstat` 教程一致。
-- **坐标**：`x`, `y` 为荷兰 RD（EPSG:28992，米），本例按 **平面欧氏距离** 计算滞后。
+图件写入 [`outputs/`](../../outputs/)。自上而下 **Run All** 即可复现。
 """
     )
 )
@@ -49,7 +55,6 @@ plt.style.use("seaborn-v0_8-whitegrid")
 
 
 def configure_matplotlib_chinese() -> None:
-    # Pick a system font that includes CJK glyphs (avoids tofu boxes / glyph warnings).
     candidates = [
         "PingFang SC",
         "PingFang HK",
@@ -94,28 +99,105 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 cells.append(
     md(
-        r"""## 教程结构（与理论文档的对应）
+        rf"""## §1 动机：空间上的观测通常不是 i.i.d.
 
-| 步骤 | Notebook 里做什么 | 理论文档 |
-|------|-------------------|----------|
-| 1 概念示意 | 下格绘制 **示意性** 半变异曲线（块金/基台/变程），与真实拟合数值无关 | [§6 块金、基台与变程](spatial_variability_theory.md#6-块金基台与变程各指什么) |
-| 2 数据与样点分布 | 加载 CSV、取 `log(zinc)`、画样点专题图 | [§2 区域化变量](spatial_variability_theory.md#2-区域化变量与随机函数) |
-| 3 经验半变异 | 分箱 + Matheron 估计得到 $\hat{\gamma}(h)$ | [§5 经验半变异](spatial_variability_theory.md#5-经验半变异与-matheron-估计) |
-| 4 模型拟合 | 球状 / 指数 / 高斯，比较 RMS | [§7 常见模型](spatial_variability_theory.md#7-常见各向同性模型轮廓) |
-| 5 读参数 | 块金、部分基台、有效距离换算 | [§6](spatial_variability_theory.md#6-块金基台与变程各指什么)、[§8 与克里金](spatial_variability_theory.md#8-与克里金的关系一句话) |
+若把每个样点当作彼此独立的重复试验，就丢掉了 **「距离越近越相似」** 的结构。空间变异分析要做的，是用 $\gamma(h)$ 或 $C(h)$ 描述 **相似性如何随滞后距离 $h$ 衰减**，为克里金等线性预测提供输入。
 
-运行过程中生成的图会保存到仓库 [`outputs/`](../../outputs/)，便于报告或博客引用。
+详见 [{T} §1]({T}#1-问题设定为何需要空间变异)。下面进入 **随机函数的一次实现**（本数据集）。
+"""
+    )
+)
+
+cells.append(
+    md(
+        rf"""## §2 区域化变量、对数变换与数据表
+
+理论文档 [{T} §2]({T}#2-区域化变量与随机函数) 把 $Z(\mathbf{{x}})$ 建模为随机函数的一次实现。土壤重金属常 **右偏**：对 `zinc` 取自然对数得到 `log_zinc`，使分布更接近对称、**二阶描述更稳定**（与常见 `gstat` 教学一致）。
+
+下一格：**直方图（原始 vs 对数）** + `head()`。
 """
     )
 )
 
 cells.append(
     code(
-        r"""# 教学用示意图：有界球状型半变异曲线的块金 C0、总基台、变程 a（非本数据拟合结果）
+        r"""df = pd.read_csv(DATA)
+df["log_zinc"] = np.log(df["zinc"])
+gdf = gpd.GeoDataFrame(
+    df,
+    geometry=gpd.points_from_xy(df["x"], df["y"]),
+    crs="EPSG:28992",
+)
+
+fig, axes = plt.subplots(1, 2, figsize=(8.5, 3.2))
+axes[0].hist(df["zinc"], bins=22, color="#9ecae1", edgecolor="white")
+axes[0].set_xlabel("锌 (ppm)")
+axes[0].set_ylabel("频数")
+axes[0].set_title("原始尺度（偏态）")
+axes[1].hist(df["log_zinc"], bins=22, color="#6baed6", edgecolor="white")
+axes[1].set_xlabel("log(锌)")
+axes[1].set_title("对数尺度（更接近对称）")
+fig.suptitle("Meuse：锌浓度的尺度选择", y=1.02)
+fig.tight_layout()
+fig.savefig(OUT / "meuse_zinc_log_hist.png", dpi=150)
+plt.show()
+
+gdf.head()
+"""
+    )
+)
+
+cells.append(
+    md(
+        rf"""## §3 平稳性直觉：先「看图」再估计 $\gamma$
+
+估计 $\hat{{\gamma}}(h)$ 时，默认 **均值大致稳定**、结构只随 **滞后** 变。若存在强烈 **空间趋势**（整体沿某方向漂移）或明显分区，应先去趋势或分区建模，否则趋势会被误吸进短程相关。
+
+见 [{T} §3]({T}#3-平稳性从能估计什么出发)。下一格：样点专题图（颜色 = `log_zinc`），用于肉眼检查。
+"""
+    )
+)
+
+cells.append(
+    code(
+        r"""fig, ax = plt.subplots(figsize=(6, 5))
+sc = ax.scatter(
+    gdf["x"],
+    gdf["y"],
+    c=gdf["log_zinc"],
+    cmap="viridis",
+    s=35,
+    edgecolor="k",
+    linewidths=0.3,
+)
+ax.set_aspect("equal", adjustable="box")
+ax.set_xlabel("x (m, RD)")
+ax.set_ylabel("y (m, RD)")
+cb = plt.colorbar(sc, ax=ax, shrink=0.85)
+cb.set_label("log(Zn), ppm (log scale)")
+ax.set_title("Meuse 样点与 log(锌) 分布")
+fig.tight_layout()
+fig.savefig(OUT / "meuse_logzn_points.png", dpi=150)
+plt.show()
+"""
+    )
+)
+
+cells.append(
+    md(
+        rf"""## §4 协方差与半变异：定义 + 「理想曲线」长什么样
+
+二阶平稳下 $\gamma(\mathbf{{h}})=C(\mathbf{{0}})-C(\mathbf{{h}})$：**$h$ 增大，协方差常减小，半变异上升**。下一格绘制 **教学用** 球状型 $\gamma(h)$（块金 $C_0$、部分基台 $C_1$、变程 $a$），**数值与后文 Meuse 拟合无关**，只为把 [{T} §4]({T}#4-协方差函数与变异函数)、[§7 读图]({T}#7-块金基台与变程读图与尺度换算) 的术语钉在一张图上。
+"""
+    )
+)
+
+cells.append(
+    code(
+        r"""# 教学示意：球状型 γ(h) 的块金、总基台、变程 a（非本数据拟合）
 
 
 def spherical_gamma(h, nugget, partial_sill, rng):
-    # 球状模型半变异 γ(h)=C0+C1*[1.5*h/a-0.5*(h/a)^3]，h<=a；h>a 时为 C0+C1。
     h = np.asarray(h, dtype=float)
     C1 = partial_sill
     a = rng
@@ -154,73 +236,9 @@ plt.show()
 
 cells.append(
     md(
-        r"""## 1. 数据与区域化变量
+        rf"""## §5 经验半变异：Matheron 估计与分箱
 
-将每个样点上的锌浓度视为区域化变量的一次实现；对 **`zinc` 取自然对数** 得到 `log_zinc`，使分布更接近对称、便于用二阶矩描述空间结构（详见理论文档 [§4](spatial_variability_theory.md#4-协方差函数与变异函数)）。
-
-下表为前几行预览；完整数据见 `data/processed/meuse.csv`。
-"""
-    )
-)
-
-cells.append(
-    code(
-        r"""df = pd.read_csv(DATA)
-df["log_zinc"] = np.log(df["zinc"])
-gdf = gpd.GeoDataFrame(
-    df,
-    geometry=gpd.points_from_xy(df["x"], df["y"]),
-    crs="EPSG:28992",
-)
-gdf.head()
-"""
-    )
-)
-
-cells.append(
-    md(
-        r"""## 2. 样点空间分布（探索性）
-
-下图用颜色表示 **log(锌)**：先看是否存在明显 **趋势或分区**（若整体随某一方向漂移，可能需要去趋势或泛克里金——本例只做基础半变异估计）。颜色仅辅助眼睛，**半变异仍基于点对距离** 计算。
-"""
-    )
-)
-
-cells.append(
-    code(
-        r"""fig, ax = plt.subplots(figsize=(6, 5))
-sc = ax.scatter(
-    gdf["x"],
-    gdf["y"],
-    c=gdf["log_zinc"],
-    cmap="viridis",
-    s=35,
-    edgecolor="k",
-    linewidths=0.3,
-)
-ax.set_aspect("equal", adjustable="box")
-ax.set_xlabel("x (m, RD)")
-ax.set_ylabel("y (m, RD)")
-cb = plt.colorbar(sc, ax=ax, shrink=0.85)
-cb.set_label("log(Zn), ppm (log scale)")
-ax.set_title("Meuse 样点与 log(锌) 分布")
-fig.tight_layout()
-fig.savefig(OUT / "meuse_logzn_points.png", dpi=150)
-plt.show()
-"""
-    )
-)
-
-cells.append(
-    md(
-        r"""## 3. 经验半变异（Matheron）
-
-在 **各向同性** 假设下，把所有点对的距离分成若干 **滞后箱**，对每个箱内的点对用 Matheron 公式估计 $\hat{\gamma}(h)$（理论见 [§5](spatial_variability_theory.md#5-经验半变异与-matheron-估计)）。
-
-- `max_lag`：考虑的最大距离（过大则点对稀少、估计不稳）。
-- `width`：箱宽（过大则曲线过粗，过小则噪声大）。
-
-下面打印前几个箱的中心、$\hat{\gamma}$ 与点对数 **counts**，便于检查是否有空箱。
+在 **各向同性** 假设下，将点对距离分箱，对每箱用 Matheron 公式计算 $\hat{{\gamma}}(h_k)$（定义见 [{T} §5]({T}#5-经验半变异与-matheron-估计)）。`max_lag` 与 `width` 控制偏差–方差权衡；打印 **counts** 检查空箱。
 """
     )
 )
@@ -260,11 +278,9 @@ list(zip(np.round(bin_center).astype(int), np.round(emp_gamma, 4), counts))[:8]
 
 cells.append(
     md(
-        r"""## 4. 理论模型拟合（球状 / 指数 / 高斯）
+        rf"""## §6 参数化模型与拟合：球状 / 指数 / 高斯
 
-在常见 **各向同性** 参数族中搜索参数，使模型曲线在经验点处尽量接近（本例用 **RMS** 作简单比较指标）。三类模型形状差异见理论文档 [§7](spatial_variability_theory.md#7-常见各向同性模型轮廓)。
-
-**注意**：`gstools` 中 `len_scale` 的含义随模型略有不同，解读「有效相关距离」时需按模型换算（见下一格打印）。
+在 [{T} §6]({T}#6-常见各向同性变异函数模型) 所述的合法模型族中选型，用 `gstools` 对 $(C_0, C_1, \text{{len\_scale}})$ 搜索，使模型在经验点上的误差（本例 **RMS**）尽量小。下一格打印各模型拟合参数；再下一格画 **经验点 + 最优模型实线 + 其余虚线**。
 """
     )
 )
@@ -285,19 +301,6 @@ for name, model in candidates.items():
     print(
         f"{name:12s}  nugget={m.nugget:.4f}  partial_sill={m.var:.4f}  len_scale={m.len_scale:.1f} m"
     )
-"""
-    )
-)
-
-cells.append(
-    md(
-        r"""## 5. 拟合曲线对比图
-
-- **散点**：经验 $\hat{\gamma}(h)$。
-- **实线**：按 RMS 最优的模型（颜色与图例）。
-- **虚线**：其余候选模型，便于对比形状差异。
-
-若最优线与散点系统偏离，可能提示 **各向异性、趋势或稳健估计** 的需求（本例不展开）。
 """
     )
 )
@@ -334,9 +337,13 @@ plt.show()
 
 cells.append(
     md(
-        r"""## 6. 块金、基台与有效距离（结合本例输出）
+        rf"""## §7 读出块金、基台、尺度，并接到克里金
 
-下面数值由 **当前最优模型** 直接读出；**有效相关距离** 采用常见工程换算（与理论文档表一致处见 [§6](spatial_variability_theory.md#6-块金基台与变程各指什么)）。
+- **块金 / 部分基台 / 总基台**：把上一张拟合曲线与 [{T} §7]({T}#7-块金基台与变程读图与尺度换算) 对照阅读。
+- **有效相关距离**：`gstools` 的 `len_scale` 与文献中 $a$ 的换算 **因模型而异**；下一格按常见工程习惯打印近似实用距离。
+- **克里金**：[{T} §8]({T}#8-与克里金的关系) — 线性预测权重完全由协方差结构决定；$\gamma$ 估偏则插值与方差都偏。
+
+各向异性、稳健变异、交叉验证等见 [{T} §9]({T}#9-本仓库-notebook-未展开的主题延伸阅读)。
 """
     )
 )
@@ -366,24 +373,17 @@ print(f"经验有效相关距离（常用换算，模型={best}）: ~{eff_range:
 
 cells.append(
     md(
-        r"""### 小结
-
-- **块金**：短于采样尺度或测量误差带来的「不连续」部分。
-- **部分基台 / 总基台**：空间相关所能解释的方差份额（与 $C(0)-C(h)$ 关系见理论 [§4](spatial_variability_theory.md#4-协方差函数与变异函数)）。
-- **变程尺度**：超过该距离后点对相关性显著减弱；克里金权重会更多依赖远处样点时需审视模型是否合适（[§8](spatial_variability_theory.md#8-与克里金的关系一句话)）。
-
-**延伸阅读**：各向异性、稳健半变异、交叉验证、泛克里金等见理论文档 [§9](spatial_variability_theory.md#9-本仓库-notebook-未展开的主题延伸阅读)。
-
----
-
-**本 Notebook 产出图件（已写入 `outputs/`）**
+        rf"""### 本 Notebook 产出图件（`outputs/`）
 
 | 文件 | 内容 |
 |------|------|
+| `meuse_zinc_log_hist.png` | 原始锌 vs log(锌) 直方图（变换动机） |
+| `meuse_logzn_points.png` | 样点与 log(锌) 空间分布 |
 | `semivariogram_concept.png` | 块金/基台/变程 **示意**（非拟合参数） |
-| `meuse_logzn_points.png` | 样点 log(锌) 分布 |
 | `empirical_variogram.png` | 经验半变异 |
 | `fitted_variogram_models.png` | 模型与经验对比 |
+
+与 [`{T}`]({T}) **节号对齐** 再读一遍理论，通常比单跑代码或单读公式更省力。
 """
     )
 )
